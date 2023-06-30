@@ -30,14 +30,34 @@ VALID_USERNAME = "admin"
 
 
 def check_credentials():
+    st.markdown(
+        """
+            <style>
+                .appview-container .main .block-container {{
+                    padding-top: {padding_top}rem;
+                    padding-bottom: {padding_bottom}rem;
+                    }}
 
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
+            </style>""".format(
+            padding_top=1, padding_bottom=1
+        ),
+        unsafe_allow_html=True,
+    )
+    col1, col2, col3 = st.columns(3)
+    image = Image.open('Hpcharge.png')
+    col2.image(image, use_column_width=True)
+    col2.markdown(
+        "<h2 style='text-align: center;'>Dashboard Login</h2>", unsafe_allow_html=True)
+    with col2:
+        username = st.text_input("Username")
+        password = st.text_input(
+            "Password", type="password")
 
     if username == VALID_USERNAME and password == st.secrets["password"]:
         st.session_state["logged_in"] = True
     else:
-        st.warning("Invalid username or password.")
+
+        col2.warning("Invalid username or password.")
 
 
 def main_page():
@@ -54,9 +74,11 @@ def main_page():
         ),
         unsafe_allow_html=True,
     )
-    col1, col2, col3, col4, col5 = st.columns(5)
+    col1, col2, col3 = st.columns(3)
     image = Image.open('Hpcharge.png')
-    col3.image(image, use_column_width=False)
+    col2.image(image, use_column_width=True)
+    st.markdown(
+        "<h2 style='text-align: center;'>EV Management Dashboard</h2>", unsafe_allow_html=True)
 
     col1, col2, col3, col4, col5, col6 = st.columns(6)
 
@@ -100,7 +122,7 @@ def main_page():
                  color='Customer Location City', text=df_count['Session Count'])
 
     fig.update_layout(
-        title='Session Count by Date',
+        title='Session Count of All EPods till Date',
         xaxis_title='Date',
         yaxis_title='Session Count',
         xaxis_tickangle=-45,
