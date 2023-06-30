@@ -4,6 +4,8 @@ import plotly.graph_objects as go
 from streamlit import session_state as state
 import os
 import numpy as np
+from PIL import Image
+
 
 st.set_page_config(layout="wide")
 df1 = pd.DataFrame(pd.read_csv('Ops_Session_Data.csv', encoding='latin1'))
@@ -34,6 +36,7 @@ def check_credentials():
 def main_page():
     st.title("Main Page")
     st.write("Welcome to the main page!")
+    image = Image.open('Hpcharge.png')
     col1, col2, col3, col4, col5, col6 = st.columns(6)
     with col1:
         df['Actual Date'] = pd.to_datetime(df['Actual Date'], errors='coerce')
