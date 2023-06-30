@@ -34,8 +34,7 @@ def check_credentials():
 
 
 def main_page():
-    st.title("Main Page")
-    st.write("Welcome to the main page!")
+
     image = Image.open('Hpcharge.png')
     col1, col2, col3, col4, col5, col6 = st.columns(6)
     col3.image(image, use_column_width=False)
