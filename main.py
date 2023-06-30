@@ -5,6 +5,7 @@ from streamlit import session_state as state
 import os
 import numpy as np
 
+st.set_page_config(layout="wide")
 df1 = pd.DataFrame(pd.read_csv('Ops_Session_Data.csv', encoding='latin1'))
 df2 = pd.DataFrame(pd.read_csv('past_bookings_May23.csv', encoding='latin1'))
 
