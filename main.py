@@ -36,6 +36,8 @@ def check_credentials():
 def main_page():
 
     image = Image.open('Hpcharge.png')
+    st.image(image, caption='Hopcharge', use_column_width=False)
+
     col1, col2, col3, col4, col5, col6 = st.columns(6)
     col3.image(image, use_column_width=False)
     with col1:
