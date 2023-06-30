@@ -47,7 +47,10 @@ def check_credentials():
     image = Image.open('Hpcharge.png')
     col2.image(image, use_column_width=True)
     col2.markdown(
-        "<h2 style='text-align: center;'>Dashboard Login</h2>", unsafe_allow_html=True)
+        "<p style='text-align: center;'>Hopcharge is leading the EV charging industry. Learn how</p>", unsafe_allow_html=True)
+    col2.markdown(
+        "<h5 style='text-align: center;'>Please enter the password you received from the Hopcharge team</h5>", unsafe_allow_html=True)
+
     with col2:
         username = st.text_input("Username")
         password = st.text_input(
@@ -74,9 +77,9 @@ def main_page():
         ),
         unsafe_allow_html=True,
     )
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4, col5 = st.columns(5)
     image = Image.open('Hpcharge.png')
-    col2.image(image, use_column_width=True)
+    col3.image(image, use_column_width=True)
     st.markdown(
         "<h2 style='text-align: center;'>EV Management Dashboard</h2>", unsafe_allow_html=True)
 
@@ -120,7 +123,19 @@ def main_page():
 
     fig = px.bar(df_count, x='Actual Date', y='Session Count',
                  color='Customer Location City', text=df_count['Session Count'])
+    total_counts = df_count.groupby('Actual Date')[
+        'Session Count'].sum().reset_index()
 
+    for i, date in enumerate(total_counts['Actual Date']):
+        fig.add_annotation(
+            x=date,
+            # Move text upwards by adding a constant value
+            y=total_counts['Session Count'][i] + 0.2,
+            text=str(total_counts['Session Count'][i]),
+            showarrow=False,
+            align='center',
+            font=dict(color='black')  # Set text color to black
+        )
     fig.update_layout(
         title='Session Count of All EPods till Date',
         xaxis_title='Date',
@@ -154,6 +169,19 @@ def main_page():
             # Create a bar plot using Plotly Express
             fig = px.bar(df_count, x='Actual Date', y='Session Count',
                          color='Customer Location City', text='Session Count')
+            total_counts = df_count.groupby('Actual Date')[
+                'Session Count'].sum().reset_index()
+
+            for i, date in enumerate(total_counts['Actual Date']):
+                fig.add_annotation(
+                    x=date,
+                    # Move text upwards by adding a constant value
+                    y=total_counts['Session Count'][i]+0.2,
+                    text=str(total_counts['Session Count'][i]),
+                    showarrow=False,
+                    align='center',
+                    font=dict(color='black')  # Set text color to black
+                )
 
             fig.update_xaxes(categoryorder='category ascending')
 
