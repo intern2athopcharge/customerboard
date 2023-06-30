@@ -38,6 +38,7 @@ def main_page():
     st.write("Welcome to the main page!")
     image = Image.open('Hpcharge.png')
     col1, col2, col3, col4, col5, col6 = st.columns(6)
+    col3.image(image, use_column_width=False)
     with col1:
         df['Actual Date'] = pd.to_datetime(df['Actual Date'], errors='coerce')
         min_date = df['Actual Date'].min().date()
