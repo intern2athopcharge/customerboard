@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
-
 from streamlit import session_state as state
 
 import numpy as np
@@ -44,12 +43,13 @@ def check_credentials():
         unsafe_allow_html=True,
     )
     col1, col2, col3 = st.columns(3)
-    image = Image.open('Hpcharge.png')
+
+    image = Image.open('LOGO HOPCHARGE-03.png')
     col2.image(image, use_column_width=True)
     col2.markdown(
-        "<p style='text-align: center;'>Hopcharge is leading the EV charging industry. Learn how</p>", unsafe_allow_html=True)
-    col2.markdown(
-        "<h5 style='text-align: center;'>Please enter the password you received from the Hopcharge team</h5>", unsafe_allow_html=True)
+        "<h2 style='text-align: center;'>ECMS Login</h2>", unsafe_allow_html=True)
+    image = Image.open('roaming vans.png')
+    col1.image(image, use_column_width=True)
 
     with col2:
         username = st.text_input("Username")
@@ -58,8 +58,7 @@ def check_credentials():
 
     if username == VALID_USERNAME and password == st.secrets["password"]:
         st.session_state["logged_in"] = True
-    else:
-
+    elif username != VALID_USERNAME or password != st.secrets["password"]:
         col2.warning("Invalid username or password.")
 
 
@@ -78,10 +77,14 @@ def main_page():
         unsafe_allow_html=True,
     )
     col1, col2, col3, col4, col5 = st.columns(5)
-    image = Image.open('Hpcharge.png')
-    col3.image(image, use_column_width=True)
+    image = Image.open('LOGO HOPCHARGE-03.png')
+    col1.image(image, use_column_width=True)
+    col5.write("\n")
+    if col5.button("Logout"):
+        st.session_state.logged_in = False
+
     st.markdown(
-        "<h2 style='text-align: center;'>EV Management Dashboard</h2>", unsafe_allow_html=True)
+        "<h2 style='text-align: leftr;'>EV Management Charging System</h2>", unsafe_allow_html=True)
 
     col1, col2, col3, col4, col5, col6 = st.columns(6)
 
@@ -116,7 +119,7 @@ def main_page():
     filtered_data['Actual Date'] = pd.to_datetime(filtered_data['Actual Date'])
     df_count = filtered_data.groupby(
         ['Actual Date', 'Customer Location City']).size().reset_index(name='Session Count')
-    df_count['Actual Date'] = df_count['Actual Date'].dt.strftime('%d/%m')
+    df_count['Actual Date'] = df_count['Actual Date'].dt.strftime('%d/%m/%y')
 
     sumcount = df_count['Session Count'].sum()
     col4.metric("Total Sessions of EPods", sumcount)
@@ -141,7 +144,8 @@ def main_page():
         xaxis_title='Date',
         yaxis_title='Session Count',
         xaxis_tickangle=-45,
-        width=1200
+        width=1200,
+        legend_title='HSZs: '
     )
 
     with col1:
@@ -149,17 +153,16 @@ def main_page():
 
     filtered_data = df[df['EPOD Name'].isin(EPod)]
 
-    if (len(EPod) < 12 and len(EPod) > 1):
-
+    if (len(EPod) > 1):
+        filtered_data = filtered_data.sort_values('EPOD Name')
         for epod in filtered_data['EPOD Name'].unique():
             with col1:
                 st.subheader(epod)
 
-            # Group the filtered data by date and customer location city, and calculate the count of sessions
             df_count = filtered_data[filtered_data['EPOD Name'] == epod].groupby(
                 ['Actual Date', 'Customer Location City']).size().reset_index(name='Session Count')
             df_count['Actual Date'] = df_count['Actual Date'].dt.strftime(
-                '%d/%m')
+                '%d/%m/%y')
             df_count = df_count.sort_values('Actual Date')
 
             # Calculate the total session count for the current EPOD
@@ -190,7 +193,8 @@ def main_page():
                 xaxis_title='Date',
                 yaxis_title=f'Session Count of {epod}',
                 xaxis_tickangle=-45,
-                width=1200
+                width=1200,
+                legend_title='HSZs: '
             )
             with col1:
                 st.plotly_chart(fig)
