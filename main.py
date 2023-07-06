@@ -84,7 +84,7 @@ def main_page():
         st.session_state.logged_in = False
 
     st.markdown(
-        "<h2 style='text-align: leftr;'>EV Management Charging System</h2>", unsafe_allow_html=True)
+        "<h2 style='text-align: leftr;'>EV Charging Management System</h2>", unsafe_allow_html=True)
 
     col1, col2, col3, col4, col5, col6 = st.columns(6)
 
@@ -123,8 +123,11 @@ def main_page():
 
     sumcount = df_count['Session Count'].sum()
     col4.metric("Total Sessions of EPods", sumcount)
+    revenue = sumcount*150
+    col5.metric("Total Revenue", f"\u20B9{revenue}")
+    fig = px.bar(df_count, x='Actual Date', y='Session Count', color_discrete_map={'Delhi': '#222e53', 'Gurgaon': ' #5366a0', 'Noida': '#00b5ad'},
 
-    fig = px.bar(df_count, x='Actual Date', y='Session Count',
+
                  color='Customer Location City', text=df_count['Session Count'])
     total_counts = df_count.groupby('Actual Date')[
         'Session Count'].sum().reset_index()
@@ -132,12 +135,12 @@ def main_page():
     for i, date in enumerate(total_counts['Actual Date']):
         fig.add_annotation(
             x=date,
-            # Move text upwards by adding a constant value
+
             y=total_counts['Session Count'][i] + 0.2,
             text=str(total_counts['Session Count'][i]),
             showarrow=False,
             align='center',
-            font=dict(color='black')  # Set text color to black
+            font=dict(color='black')
         )
     fig.update_layout(
         title='Session Count of All EPods till Date',
@@ -145,7 +148,8 @@ def main_page():
         yaxis_title='Session Count',
         xaxis_tickangle=-45,
         width=1200,
-        legend_title='HSZs: '
+        legend_title='HSZs: ',
+
     )
 
     with col1:
