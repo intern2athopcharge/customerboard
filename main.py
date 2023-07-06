@@ -134,7 +134,7 @@ def main_page():
         fig.add_annotation(
             x=date,
 
-            y=total_counts['Session Count'][i] + 0.5,
+            y=total_counts['Session Count'][i] + 0.8,
             text=str(total_counts['Session Count'][i]),
             showarrow=False,
             align='center',
