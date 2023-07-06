@@ -28,6 +28,12 @@ df['Customer Location City'] = df['Customer Location City'].replace(
 VALID_USERNAME = "admin"
 
 
+def formatINR(number):
+    s, *d = str(number).partition(".")
+    r = ",".join([s[x-2:x] for x in range(-3, -len(s), -2)][::-1] + [s[-3:]])
+    return "".join([r] + d)
+
+
 def check_credentials():
     st.markdown(
         """
@@ -124,6 +130,7 @@ def main_page():
     sumcount = df_count['Session Count'].sum()
     col4.metric("Total Sessions of EPods", sumcount)
     revenue = sumcount*150
+    revenue = formatINR(revenue)
     col5.metric("Total Revenue", f"\u20B9{revenue}")
     fig = px.bar(df_count, x='Actual Date', y='Session Count', color_discrete_map={'Delhi': '#243465', 'Gurgaon': ' #5366a0', 'Noida': '#919fc8'},
                  color='Customer Location City', text=df_count['Session Count'])
@@ -134,7 +141,7 @@ def main_page():
         fig.add_annotation(
             x=date,
 
-            y=total_counts['Session Count'][i] + 0.8,
+            y=total_counts['Session Count'][i] + 0.9,
             text=str(total_counts['Session Count'][i]),
             showarrow=False,
             align='center',
@@ -157,11 +164,15 @@ def main_page():
     filtered_data = df[df['EPOD Name'].isin(EPod)]
 
     if (len(EPod) > 1):
+
+        col1, col2, col3, col4, col5, col6 = st.columns(6)
         filtered_data = filtered_data.sort_values('EPOD Name')
         for epod in filtered_data['EPOD Name'].unique():
+
             with col1:
                 st.subheader(epod)
-
+            filtered_data = df[(df['Actual Date'] >= start_date)
+                               & (df['Actual Date'] <= end_date)]
             df_count = filtered_data[filtered_data['EPOD Name'] == epod].groupby(
                 ['Actual Date', 'Customer Location City']).size().reset_index(name='Session Count')
             df_count['Actual Date'] = df_count['Actual Date'].dt.strftime(
@@ -171,7 +182,10 @@ def main_page():
             # Calculate the total session count for the current EPOD
             sumcount = df_count['Session Count'].sum()
             col1.metric(f"Total Sessions by {epod}", sumcount)
+            revenue = sumcount*150
+            revenue = formatINR(revenue)
 
+            col1.metric("Total Revenue", f"\u20B9{revenue}")
             # Create a bar plot using Plotly Express
             fig = px.bar(df_count, x='Actual Date', y='Session Count',
                          color='Customer Location City', color_discrete_map={'Delhi': '#243465', 'Gurgaon': ' #5366a0', 'Noida': '#919fc8'}, text='Session Count')
