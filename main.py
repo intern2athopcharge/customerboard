@@ -125,9 +125,7 @@ def main_page():
     col4.metric("Total Sessions of EPods", sumcount)
     revenue = sumcount*150
     col5.metric("Total Revenue", f"\u20B9{revenue}")
-    fig = px.bar(df_count, x='Actual Date', y='Session Count', color_discrete_map={'Delhi': '#222e53', 'Gurgaon': ' #5366a0', 'Noida': '#00b5ad'},
-
-
+    fig = px.bar(df_count, x='Actual Date', y='Session Count', color_discrete_map={'Delhi': '#243465', 'Gurgaon': ' #5366a0', 'Noida': '#919fc8'},
                  color='Customer Location City', text=df_count['Session Count'])
     total_counts = df_count.groupby('Actual Date')[
         'Session Count'].sum().reset_index()
@@ -136,10 +134,11 @@ def main_page():
         fig.add_annotation(
             x=date,
 
-            y=total_counts['Session Count'][i] + 0.2,
+            y=total_counts['Session Count'][i] + 0.5,
             text=str(total_counts['Session Count'][i]),
             showarrow=False,
             align='center',
+            font_size=16,
             font=dict(color='black')
         )
     fig.update_layout(
@@ -175,19 +174,20 @@ def main_page():
 
             # Create a bar plot using Plotly Express
             fig = px.bar(df_count, x='Actual Date', y='Session Count',
-                         color='Customer Location City', text='Session Count')
+                         color='Customer Location City', color_discrete_map={'Delhi': '#243465', 'Gurgaon': ' #5366a0', 'Noida': '#919fc8'}, text='Session Count')
             total_counts = df_count.groupby('Actual Date')[
                 'Session Count'].sum().reset_index()
 
             for i, date in enumerate(total_counts['Actual Date']):
                 fig.add_annotation(
                     x=date,
-                    # Move text upwards by adding a constant value
+
                     y=total_counts['Session Count'][i]+0.2,
                     text=str(total_counts['Session Count'][i]),
                     showarrow=False,
                     align='center',
-                    font=dict(color='black')  # Set text color to black
+                    font_size=18,
+                    font=dict(color='black')
                 )
 
             fig.update_xaxes(categoryorder='category ascending')
