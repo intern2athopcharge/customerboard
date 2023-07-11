@@ -10,9 +10,17 @@ import seaborn as sns
 
 st.set_page_config(layout="wide", page_title="Hopcharge Dashboard",
                    page_icon=":bar_chart:")
-df1 = pd.DataFrame(pd.read_csv('Ops_Session_Data.csv', encoding='latin1'))
-df2 = pd.DataFrame(pd.read_csv('past_bookings_May23.csv', encoding='latin1'))
-
+df1 = pd.read_csv('Ops_Session_Data.csv', encoding='latin1')
+df2 = pd.read_csv('past_bookings_May23.csv', encoding='latin1')
+# df3 = pd.read_csv('past_bookings_Jan23.csv', encoding='latin1')
+# df4 = pd.read_csv('past_bookings_Feb23.csv', encoding='latin1')
+# df5 = pd.read_csv('past_bookings_Mar23.csv', encoding='latin1')
+# df6 = pd.read_csv('past_bookings_Apr23.csv', encoding='latin1')
+# df7 = pd.read_csv('past_bookings_Jun23.csv', encoding='latin1')
+# df = df3._append([df4, df5, df5, df6, df2, df7], ignore_index=True)
+df2 = df2[df2['canceled'] != True]
+# df = df.sort_values('created')
+# df.to_csv('data.csv')
 df1 = df1.dropna(subset=["uid"])
 merged_df = pd.merge(df2, df1, on=["uid"])
 merged_df['EPOD Name'] = merged_df['EPOD Name'].str.extract(
@@ -23,9 +31,6 @@ requiredcols = ['Actual Date', 'EPOD Name', 'Customer Location City']
 df = merged_df[requiredcols]
 df['Customer Location City'] = df['Customer Location City'].replace(
     ['Noida', 'Faridabad', 'Ghaziabad'], 'Noida')
-
-
-VALID_USERNAME = "admin"
 
 
 def formatINR(number):
@@ -62,9 +67,9 @@ def check_credentials():
         password = st.text_input(
             "Password", type="password")
 
-    if username == VALID_USERNAME and password == st.secrets["password"]:
+    if username == st.secrets["username"] and password == st.secrets["password"]:
         st.session_state["logged_in"] = True
-    elif username != VALID_USERNAME or password != st.secrets["password"]:
+    elif username != st.secrets["username"] or password != st.secrets["password"]:
         col2.warning("Invalid username or password.")
 
 
@@ -128,7 +133,7 @@ def main_page():
     df_count['Actual Date'] = df_count['Actual Date'].dt.strftime('%d/%m/%y')
 
     sumcount = df_count['Session Count'].sum()
-    col4.metric("Total Sessions of EPods", sumcount)
+    col4.metric("Total Sessions of EPods", formatINR(sumcount))
     revenue = sumcount*150
     revenue = formatINR(revenue)
     col5.metric("Total Revenue", f"\u20B9{revenue}")
@@ -178,15 +183,16 @@ def main_page():
             df_count['Actual Date'] = df_count['Actual Date'].dt.strftime(
                 '%d/%m/%y')
             df_count = df_count.sort_values('Actual Date')
-
-            # Calculate the total session count for the current EPOD
             sumcount = df_count['Session Count'].sum()
+
+            sumcount = formatINR(sumcount)
             col1.metric(f"Total Sessions by {epod}", sumcount)
+
             revenue = sumcount*150
             revenue = formatINR(revenue)
 
             col1.metric("Total Revenue", f"\u20B9{revenue}")
-            # Create a bar plot using Plotly Express
+
             fig = px.bar(df_count, x='Actual Date', y='Session Count',
                          color='Customer Location City', color_discrete_map={'Delhi': '#243465', 'Gurgaon': ' #5366a0', 'Noida': '#919fc8'}, text='Session Count')
             total_counts = df_count.groupby('Actual Date')[
