@@ -67,9 +67,9 @@ def check_credentials():
         password = st.text_input(
             "Password", type="password")
 
-    if username == st.secrets["username"] and password == st.secrets["password"]:
+    if username in st.secrets["username"] and password in st.secrets["password"]:
         st.session_state["logged_in"] = True
-    elif username != st.secrets["username"] or password != st.secrets["password"]:
+    elif username not in st.secrets["username"] or password not in st.secrets["password"]:
         col2.warning("Invalid username or password.")
 
 
@@ -184,12 +184,10 @@ def main_page():
                 '%d/%m/%y')
             df_count = df_count.sort_values('Actual Date')
             sumcount = df_count['Session Count'].sum()
-
-            sumcount = formatINR(sumcount)
-            col1.metric(f"Total Sessions by {epod}", sumcount)
-
             revenue = sumcount*150
             revenue = formatINR(revenue)
+            sumcount = formatINR(sumcount)
+            col1.metric(f"Total Sessions by {epod}", sumcount)
 
             col1.metric("Total Revenue", f"\u20B9{revenue}")
 
